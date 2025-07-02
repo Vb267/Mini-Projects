@@ -1,26 +1,30 @@
-from turtle import Screen, Turtle
+from turtle import Screen
+from snake import Snake
+
+# from food import Food
+import time
 
 screen = Screen()
 screen.setup(width=600, height=600)
 screen.bgcolor("black")
-screen.title("Snake Game")
-segment_positions = [(0, 0), (-20, 0), (-40, 0)]
+screen.title("My Snake Game")
+screen.tracer(0)
 
-for position in segment_positions:
-    segment = Turtle("square")
-    segment.color("white")
-    segment.penup()
-    segment.goto(position)
+snake = Snake()
+# food = Food()
 
-segment_1 = Turtle("square")
-segment_1.color("white")
+screen.listen()
+screen.onkey(snake.up, "Up")
+screen.onkey(snake.down, "Down")
+screen.onkey(snake.left, "Left")
+screen.onkey(snake.right, "Right")
 
-segment_2 = Turtle("square")
-segment_2.color("white")
-segment_2.goto(-20, 0)
+game_is_on = True
+while game_is_on:
+    screen.update()
+    time.sleep(0.1)
 
-segment_3 = Turtle("square")
-segment_3.color("white")
-segment_3.goto(-40, 0)
+    snake.move()
 
-screen.exitonclick()  # Waits for a click to exit the game
+
+screen.exitonclick()
