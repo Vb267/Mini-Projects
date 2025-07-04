@@ -1,26 +1,74 @@
 from turtle import Screen, Turtle
+from snake import Snake
+from food import Food
+from scoreboard import Scoreboard
+import time
+
+
+def draw_border():
+    border = Turtle()
+    border.hideturtle()
+    border.color("gray")
+    border.penup()
+    border.goto(-290, -290)
+    border.pendown()
+    border.pensize(3)
+    for _ in range(4):
+        border.forward(580)
+        border.left(90)
+
 
 screen = Screen()
 screen.setup(width=600, height=600)
 screen.bgcolor("black")
-screen.title("Snake Game")
-segment_positions = [(0, 0), (-20, 0), (-40, 0)]
+screen.title("🐍 Snake Game - Upgraded UI")
+screen.tracer(0)
+draw_border()
 
-for position in segment_positions:
-    segment = Turtle("square")
-    segment.color("white")
-    segment.penup()
-    segment.goto(position)
+snake = Snake()
+food = Food()
+scoreboard = Scoreboard()
 
-segment_1 = Turtle("square")
-segment_1.color("white")
+# Instructions before game starts
+intro = Turtle()
+intro.hideturtle()
+intro.color("white")
+intro.penup()
+intro.goto(0, 0)
+intro.write("Press Arrow Keys to Start!", align="center", font=("Arial", 18, "normal"))
 
-segment_2 = Turtle("square")
-segment_2.color("white")
-segment_2.goto(-20, 0)
+screen.listen()
+screen.onkey(snake.up, "Up")
+screen.onkey(snake.down, "Down")
+screen.onkey(snake.left, "Left")
+screen.onkey(snake.right, "Right")
 
-segment_3 = Turtle("square")
-segment_3.color("white")
-segment_3.goto(-40, 0)
+# Wait for user input
+screen.update()
+time.sleep(1)
+intro.clear()
 
-screen.exitonclick()  # Waits for a click to exit the game
+game_is_on = True
+while game_is_on:
+    screen.update()
+    time.sleep(0.1)
+    snake.move()
+
+    # Detect collision with food
+    if snake.head.distance(food) < 15:
+        food.refresh()
+        snake.extend()
+        scoreboard.increase_score()
+
+    # Detect collision with wall
+    if abs(snake.head.xcor()) > 280 or abs(snake.head.ycor()) > 280:
+        game_is_on = False
+        scoreboard.game_over()
+
+    # Detect collision with tail
+    for segment in snake.segments[1:]:
+        if snake.head.distance(segment) < 10:
+            game_is_on = False
+            scoreboard.game_over()
+
+screen.exitonclick()
